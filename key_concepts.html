@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MP0485_RA9_JDBC - Key Concepts Validation Questions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+            margin-left: 280px;
+        }
+        
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+            overflow-y: auto;
+            padding: 30px 20px;
+            z-index: 1000;
+        }
+        
+        .sidebar-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        .sidebar-nav {
+            list-style: none;
+        }
+        
+        .sidebar-nav li {
+            margin-bottom: 8px;
+        }
+        
+        .sidebar-nav a {
+            color: #555;
+            text-decoration: none;
+            display: block;
+            padding: 10px 12px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+        }
+        
+        .sidebar-nav a:hover {
+            background: #f0f2ff;
+            color: #667eea;
+            padding-left: 16px;
+        }
+        
+        .sidebar-nav a.active {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+            padding-left: 16px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            background: #667eea;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+        
+        .section-subtitle {
+            color: #667eea;
+            font-size: 0.85em;
+            margin-bottom: 5px;
+        }
+        
+        .question {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+        
+        .question:hover {
+            background: #f0f2ff;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+        }
+        
+        .question-number {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 0.9em;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        .question-text {
+            color: #333;
+        }
+        
+        footer {
+            background: #f8f9fa;
+            border-top: 2px solid #e0e0e0;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .total-questions {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin-left: 0;
+            }
+            .sidebar {
+                display: none;
+            }
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+            }
+        }
+        
+        @media (max-width: 1024px) {
+            body {
+                margin-left: 0;
+            }
+            .sidebar {
+                left: -280px;
+                transition: left 0.3s ease;
+            }
+            .sidebar.open {
+                left: 0;
+            }
+            .sidebar-toggle {
+                display: block;
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 1001;
+                background: white;
+                border: none;
+                padding: 10px 15px;
+                border-radius: 5px;
+                cursor: pointer;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            }
+        }
+        
+        @media (min-width: 1025px) {
+            .sidebar-toggle {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="sidebar-toggle" onclick="toggleSidebar()">☰ Menu</button>
+    
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-title">📑 Contents</div>
+        <ul class="sidebar-nav" id="sidebarNav">
+            <li><a href="#maven" class="section-link">Maven & POM</a></li>
+            <li><a href="#jdbc" class="section-link">JDBC Basic Concepts</a></li>
+            <li><a href="#prepared" class="section-link">Prepared Statements</a></li>
+            <li><a href="#dao" class="section-link">DAO Pattern</a></li>
+            <li><a href="#oop-encapsulation" class="section-link">OOP - Encapsulation</a></li>
+            <li><a href="#oop-inheritance" class="section-link">OOP - Inheritance</a></li>
+            <li><a href="#oop-equality" class="section-link">OOP - Object Equality</a></li>
+            <li><a href="#mvc" class="section-link">MVC Architecture</a></li>
+            <li><a href="#sql" class="section-link">SQL & Database</a></li>
+            <li><a href="#exceptions" class="section-link">Exception Handling</a></li>
+        </ul>
+    </div>
+    <div class="container">
+        <header>
+            <h1>MP0485_RA9_JDBC</h1>
+            <p>Key Concepts Validation Questions</p>
+            <p>SQL • DAO • MVC • OOP • PreparedStatement • JDBC • Maven • POM</p>
+        </header>
+        
+        <div class="content">
+            <!-- Maven & POM Section -->
+            <div class="section" id="maven">
+                <div class="section-title">Maven & POM (5 questions)</div>
+                
+                <div class="question">
+                    <span class="question-number">1.</span>
+                    <span class="question-text">What is the purpose of the <code>pom.xml</code> file in a Maven project?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">2.</span>
+                    <span class="question-text">What dependency is declared in the <code>pom.xml</code> file, and why is it necessary for this project?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">3.</span>
+                    <span class="question-text">What does the <code>maven.compiler.source</code> property set to 16 indicate?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">4.</span>
+                    <span class="question-text">Why is the packaging set to <code>jar</code> instead of <code>war</code> in this project?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">5.</span>
+                    <span class="question-text">What would happen if you remove the MySQL connector dependency from the <code>pom.xml</code>?</span>
+                </div>
+            </div>
+            
+            <!-- JDBC Conceptos Básicos Section -->
+            <div class="section" id="jdbc">
+                <div class="section-title">JDBC Basic Concepts (7 questions)</div>
+                
+                <div class="question">
+                    <span class="question-number">6.</span>
+                    <span class="question-text">What does JDBC stand for and what is its main purpose?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">7.</span>
+                    <span class="question-text">What class is used to establish a connection to the MySQL database in this project?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">8.</span>
+                    <span class="question-text">How many parameters does <code>DriverManager.getConnection()</code> require in this implementation?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">9.</span>
+                    <span class="question-text">What is the purpose of the connection communication options (<code>?useSSL=false&amp;useTimezone=true...</code>)?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">10.</span>
+                    <span class="question-text">Why is it important to use <code>connection.close()</code> after finishing database operations?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">11.</span>
+                    <span class="question-text">What exception is caught when a connection fails in the <code>connect()</code> method?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">12.</span>
+                    <span class="question-text">Explain the difference between <code>Statement</code> and <code>PreparedStatement</code> in JDBC.</span>
+                </div>
+            </div>
+            
+            <!-- Prepared Statements Section -->
+            <div class="section" id="prepared">
+                <div class="section-title">Prepared Statements (6 questions)</div>
+                
+                <div class="question">
+                    <span class="question-number">13.</span>
+                    <span class="question-text">Where in the code are prepared statements used?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">14.</span>
+                    <span class="question-text">What SQL injection vulnerability would occur if you used string concatenation instead of prepared statements?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">15.</span>
+                    <span class="question-text">Why are prepared statements considered more secure than regular statements?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">16.</span>
+                    <span class="question-text">How are the <code>?</code> placeholders used in the <code>SQL_INSERT</code> query?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">17.</span>
+                    <span class="question-text">What method is used to set parameters in a <code>PreparedStatement</code>?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">18.</span>
+                    <span class="question-text">What is the performance advantage of using prepared statements when executing similar queries multiple times?</span>
+                </div>
+            </div>
+            
+            <!-- DAO Pattern Section -->
+            <div class="section" id="dao">
+                <div class="section-title">DAO Pattern (8 questions)</div>
+                
+                <div class="question">
+                    <span class="question-number">19.</span>
+                    <span class="question-text">What does DAO stand for?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">20.</span>
+                    <span class="question-text">Why is an interface (<code>IDAO</code>) created in this project?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">21.</span>
+                    <span class="question-text">List all the CRUD operations defined in the <code>IDAO</code> interface.</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">22.</span>
+                    <span class="question-text">What is the benefit of implementing the DAO pattern in this architecture?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">23.</span>
+                    <span class="question-text">Why does <code>DAOSQL</code> class implement the <code>IDAO</code> interface?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">24.</span>
+                    <span class="question-text">How would you add support for a different database (e.g., PostgreSQL) using the DAO pattern?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">25.</span>
+                    <span class="question-text">What methods in <code>DAOSQL</code> handle ResultSet mapping to Student objects?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">26.</span>
+                    <span class="question-text">Explain the resource management pattern used in the <code>finally</code> blocks of DAO methods.</span>
+                </div>
+            </div>
+            
+            <!-- POO - Encapsulation & Constructors Section -->
+            <div class="section" id="oop-encapsulation">
+                <div class="section-title">OOP - Encapsulation & Constructors (5 questions)</div>
+                
+                <div class="question">
+                    <span class="question-number">27.</span>
+                    <span class="question-text">How many constructors does the <code>Student</code> class have?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">28.</span>
+                    <span class="question-text">Why does the <code>Student</code> class have multiple constructors with different parameters?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">29.</span>
+                    <span class="question-text">What is the access modifier of the <code>Student</code> class attributes, and why?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">30.</span>
+                    <span class="question-text">What is the purpose of the getter and setter methods in the <code>Student</code> class?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">31.</span>
+                    <span class="question-text">Why are the <code>id</code>, <code>name</code>, and <code>age</code> attributes declared as private?</span>
+                </div>
+            </div>
+            
+            <!-- POO - Inheritance & Polymorphism Section -->
+            <div class="section" id="oop-inheritance">
+                <div class="section-title">OOP - Inheritance & Polymorphism (5 questions)</div>
+                
+                <div class="question">
+                    <span class="question-number">32.</span>
+                    <span class="question-text">How does <code>StudentControllerImplementation</code> use polymorphism with the <code>IDAO</code> interface?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">33.</span>
+                    <span class="question-text">What design pattern is used when <code>StudentControllerImplementation</code> implements <code>IStudentController</code>?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">34.</span>
+                    <span class="question-text">Why is a reference to the interface (<code>IDAO</code>) used instead of the concrete class (<code>DAOSQL</code>)?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">35.</span>
+                    <span class="question-text">How does the use of interfaces allow for better flexibility in this code?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">36.</span>
+                    <span class="question-text">If you needed to create a new DAO implementation for a different database, what would you need to do?</span>
+                </div>
+            </div>
+            
+            <!-- POO - Object Equality Section -->
+            <div class="section" id="oop-equality">
+                <div class="section-title">OOP - Object Equality (3 questions)</div>
+                
+                <div class="question">
+                    <span class="question-number">37.</span>
+                    <span class="question-text">Explain the <code>equals()</code> method implementation in the <code>Student</code> class. What does it compare?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">38.</span>
+                    <span class="question-text">Why is the <code>hashCode()</code> method overridden in the <code>Student</code> class?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">39.</span>
+                    <span class="question-text">How does the <code>hashCode()</code> method use only the <code>name</code> attribute for equality comparison?</span>
+                </div>
+            </div>
+            
+            <!-- MVC Architecture Section -->
+            <div class="section" id="mvc">
+                <div class="section-title">MVC Architecture (7 questions)</div>
+                
+                <div class="question">
+                    <span class="question-number">40.</span>
+                    <span class="question-text">What is the MVC pattern and which layers does this project implement?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">41.</span>
+                    <span class="question-text">What responsibility does the <code>view</code> package (Main.java) have in this application?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">42.</span>
+                    <span class="question-text">What is the role of the <code>controller</code> package in the MVC architecture?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">43.</span>
+                    <span class="question-text">What data layer responsibilities are handled by the <code>dao</code> package?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">44.</span>
+                    <span class="question-text">How does data flow from the View to the DAO layer?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">45.</span>
+                    <span class="question-text">Why is there a separation between the Model, View, and Controller layers?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">46.</span>
+                    <span class="question-text">How would adding a new data layer (like JSON or XML) affect the View and Controller?</span>
+                </div>
+            </div>
+            
+            <!-- SQL & Database Operations Section -->
+            <div class="section" id="sql">
+                <div class="section-title">SQL & Database Operations (6 questions)</div>
+                
+                <div class="question">
+                    <span class="question-number">47.</span>
+                    <span class="question-text">What SQL statement is used to create the database if it doesn't exist?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">48.</span>
+                    <span class="question-text">Explain the structure of the <code>students</code> table being created in the <code>createTable()</code> method.</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">49.</span>
+                    <span class="question-text">What is the purpose of the <code>auto_increment</code> keyword for the <code>id</code> column?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">50.</span>
+                    <span class="question-text">Why does the <code>read()</code> method execute a SELECT query with a WHERE clause filtering by name?</span>
+                </div>
+            </div>
+            
+            <!-- Exception Handling Section -->
+            <div class="section" id="exceptions">
+                <div class="section-title">Exception Handling (5 questions)</div>
+                
+                <div class="question">
+                    <span class="question-number">51.</span>
+                    <span class="question-text">How many custom exception classes are defined in this project?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">52.</span>
+                    <span class="question-text">What is the difference between <code>DAO_Excep</code> and <code>Student_Excep</code>?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">53.</span>
+                    <span class="question-text">Why does the <code>connect()</code> method throw a <code>DAO_Excep</code> exception?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">54.</span>
+                    <span class="question-text">How are exceptions propagated from the DAO layer to the View layer?</span>
+                </div>
+                
+                <div class="question">
+                    <span class="question-number">55.</span>
+                    <span class="question-text">What is the purpose of having separate exception classes for different layers?</span>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 2px solid #e0e0e0;">
+                <div class="total-questions">Total: 55 Questions</div>
+            </div>
+        </div>
+        
+        <footer>
+            <p><strong>MP0485_RA9_JDBC Project</strong> - Key Concepts Validation Questions</p>
+            <p>Topics: SQL • DAO Pattern • MVC Architecture • Object-Oriented Programming • PreparedStatement • JDBC • Maven • POM.xml</p>
+            <p style="margin-top: 10px; font-size: 0.85em;">Generated for student assessment and concept validation</p>
+        </footer>
+    </div>
+    
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('open');
+        }
+        
+        // Close sidebar when clicking on a link
+        document.querySelectorAll('.section-link').forEach(link => {
+            link.addEventListener('click', () => {
+                const sidebar = document.getElementById('sidebar');
+                sidebar.classList.remove('open');
+            });
+        });
+        
+        // Update active link as user scrolls
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('.section[id]');
+            const navLinks = document.querySelectorAll('.section-link');
+            
+            let currentSection = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                if (window.pageYOffset >= sectionTop) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + currentSection) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
